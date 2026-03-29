@@ -1,65 +1,138 @@
-import Image from "next/image";
+import Link from "next/link";
+import { ArrowRight, Eye, Lock, MonitorCog, ShieldCheck } from "lucide-react";
 
-export default function Home() {
+import { AppShell, Panel, StatCard } from "@/components/app-shell";
+import {
+  capabilityCards,
+  consoleStats,
+  workflowSteps,
+} from "@/lib/demo-data";
+
+export default function HomePage() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+    <AppShell>
+      <div className="space-y-8">
+        <section className="grid gap-6 lg:grid-cols-[1.3fr_0.7fr]">
+          <div className="rounded-[2rem] border border-white/10 bg-white/6 p-8 shadow-[0_30px_90px_rgba(0,0,0,0.45)] backdrop-blur-xl md:p-10">
+            <div className="mb-4 inline-flex rounded-full border border-cyan-300/20 bg-cyan-300/10 px-4 py-2 text-xs uppercase tracking-[0.3em] text-cyan-100/80">
+              Desktop-aware agents, made trustworthy
+            </div>
+            <h1 className="max-w-4xl text-5xl font-semibold tracking-tight text-white md:text-7xl">
+              ΨClaw brings secure operator-guided desktop intelligence to OpenClaw.
+            </h1>
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-zinc-300 md:text-xl">
+              A polished prototype for observing macOS UI state, proposing safe next
+              steps, replaying traces, and preparing future training on real desktop tasks.
+            </p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link
+                href="/console"
+                className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-medium text-black transition hover:bg-cyan-100"
+              >
+                Enter operator console
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link
+                href="/gym"
+                className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/6 px-5 py-3 text-sm font-medium text-white transition hover:bg-white/10"
+              >
+                Explore Desktop Gym
+              </Link>
+            </div>
+          </div>
+
+          <Panel title="Mission profile" eyebrow="Why this exists">
+            <div className="space-y-5 text-sm leading-7 text-zinc-300">
+              <p>
+                Desktop agents shouldn&apos;t feel like black-box click bots. ΨClaw frames
+                execution as an observable, policy-aware loop.
+              </p>
+              <div className="grid gap-3">
+                {[
+                  {
+                    icon: Eye,
+                    text: "Observe UI structure, focus, controls, and risk cues.",
+                  },
+                  {
+                    icon: MonitorCog,
+                    text: "Simulate tasks before touching real operator workflows.",
+                  },
+                  {
+                    icon: Lock,
+                    text: "Require approval for risky or irreversible steps.",
+                  },
+                  {
+                    icon: ShieldCheck,
+                    text: "Capture traces for replay, evals, and future training.",
+                  },
+                ].map((item) => {
+                  const Icon = item.icon;
+
+                  return (
+                    <div
+                      key={item.text}
+                      className="flex items-start gap-3 rounded-2xl border border-white/8 bg-black/20 p-3"
+                    >
+                      <Icon className="mt-0.5 h-4 w-4 text-violet-200" />
+                      <p>{item.text}</p>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </Panel>
+        </section>
+
+        <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          {consoleStats.map((stat) => (
+            <StatCard key={stat.label} {...stat} />
+          ))}
+        </section>
+
+        <section className="grid gap-6 lg:grid-cols-3">
+          {capabilityCards.map((card) => (
+            <Panel key={card.title} title={card.title}>
+              <p className="text-sm leading-7 text-zinc-300">{card.description}</p>
+            </Panel>
+          ))}
+        </section>
+
+        <section className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
+          <Panel title="Operator workflow" eyebrow="Safe action loop">
+            <div className="space-y-3">
+              {workflowSteps.map((step, index) => (
+                <div
+                  key={step}
+                  className="flex gap-4 rounded-2xl border border-white/8 bg-black/20 p-4"
+                >
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-violet-400/20 text-sm text-violet-100">
+                    {index + 1}
+                  </div>
+                  <p className="text-sm leading-7 text-zinc-300">{step}</p>
+                </div>
+              ))}
+            </div>
+          </Panel>
+
+          <Panel title="Product story" eyebrow="What the demo proves">
+            <div className="grid gap-4 md:grid-cols-2">
+              {[
+                "Operator console for live desktop state, proposals, and approvals.",
+                "Desktop Gym to simulate training scenarios before real-world rollout.",
+                "Trace explorer showing full causal chain from observation to action.",
+                "Eval dashboard measuring intervention rate, safety, and task success.",
+              ].map((item) => (
+                <div
+                  key={item}
+                  className="rounded-2xl border border-white/8 bg-black/20 p-4 text-sm leading-7 text-zinc-300"
+                >
+                  {item}
+                </div>
+              ))}
+            </div>
+          </Panel>
+        </section>
+      </div>
+    </AppShell>
   );
 }
