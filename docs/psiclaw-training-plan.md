@@ -21,7 +21,9 @@ _Last updated: 2026-03-30_
 | Fine-tuning target | **8B class** (runs on 8–16GB user machines) |
 | Agent framework | **Qwen-Agent** (native, first-party for this model family) |
 | Personalization layer | **OpenTrust** (memory as reasoning, not static retrieval) |
-| Efficiency layer | **Unbrowse** (API-first for known web services) |
+| REST API routing | **Unbrowse** (API-first for known web services) |
+| Pre-built site CLI | **OpenCLI** (deterministic adapters, zero LLM cost at runtime) |
+| Real browser surface | **Tandem Browser** (human+agent collaboration, 250-endpoint local API) |
 | Distribution | Default model option in OpenClaw for desktop companion mode |
 
 ### Technical foundation (arxiv:2511.21631)
@@ -409,15 +411,74 @@ Key behavioral anchors:
 
 ---
 
-## 7b. Unbrowse Integration
+## 7b. Browser Stack: Unbrowse + OpenCLI + Tandem
 
-Add Unbrowse as an efficiency layer beneath the desktop companion:
-- Agent checks whether an API skill exists for the target site before using DOM/browser automation
-- If yes → call API directly (100x faster, 80% cheaper)
-- If no → fall back to visual browser automation
+PsiClaw uses a tiered browser strategy to minimize LLM cost and maximize reliability.
 
-There is already an OpenClaw plugin: `lekt9/unbrowse-openclaw`
-This is worth evaluating as a near-term integration for the companion's web surface.
+### Decision tree
+
+```
+Task requires web interaction
+    │
+    ├─ Known service with REST API?
+    │   └─ YES → Unbrowse (direct API call, 100x faster, 80% cheaper)
+    │
+    ├─ Known site with OpenCLI adapter?
+    │   └─ YES → OpenCLI (deterministic CLI, zero LLM cost at runtime)
+    │
+    ├─ Visual task, authenticated session, or human-in-loop needed?
+    │   └─ YES → Tandem Browser (250-endpoint local API, security model)
+    │
+    └─ Novel/unknown site, one-off → PsiClaw visual grounding directly
+```
+
+### Unbrowse
+- Auto-discovers APIs from browser traffic, generates skills to call them directly
+- **100x faster, 80% cheaper** than browser DOM automation
+- OpenClaw plugin available: `lekt9/unbrowse-openclaw`
+
+### OpenCLI (`jackwener/opencli`)
+- Turns any website, Electron app, or local CLI into a standardized command-line interface
+- **Zero token cost at runtime** — pre-built adapters produce deterministic JSON
+- 50+ built-in adapters (Reddit, HackerNews, Bilibili, GitHub, X/Twitter, YouTube, etc.)
+- Can CLI-ify any **Electron app** via CDP + AppleScript (VS Code, Slack, Notion, etc.)
+- AGENT.md integration: `opencli list` lets Qwen-Agent auto-discover all available tools
+- Anti-detection built in at every layer
+- `opencli doctor` for self-healing setup
+
+### Tandem Browser (`hydro13/tandem-browser`)
+- Local-first Electron browser built specifically for human + AI collaboration with OpenClaw
+- Built by an OpenClaw maintainer; OpenClaw-first by design
+
+**Local API endpoint for training data collection:** `http://127.0.0.1:8765`
+
+The 250-endpoint API covers:
+- Tab management: `GET /tabs`, `POST /tabs/navigate`, `GET /tabs/:id/snapshot`
+- DOM operations: `POST /tabs/:id/query`, `POST /tabs/:id/click`, `POST /tabs/:id/type`
+- Network layer: `GET /tabs/:id/requests`, network mocking
+- DevTools: `POST /tabs/:id/evaluate`, script injection
+- Sessions: session-aware requests within the human's authenticated browser context
+- Screenshots and observability
+
+**Security model (8 layers):**
+1. Network shield — domain/IP blocklists
+2. Outbound guard — POST body scanning for credential leaks
+3. AST-level JavaScript analysis on runtime scripts
+4. Behavior monitoring per tab
+5. Gatekeeper channel — ambiguous cases surface to human instead of silent automation
+6. Strict layer separation — page JS cannot fingerprint or observe the agent layer
+7. Prompt injection defense at the browser/agent boundary (first browser-level impl)
+8. Human approval handoffs for risky situations
+
+**For training data collection:** Tandem is the recommended surface for collecting
+browser interaction traces. Use the local API to capture:
+- Tab state and DOM snapshots before/after each action
+- The agent's proposed action and the human operator's response (approve/deny)
+- Full trace artifacts for replay and eval scoring
+
+OpenClaw does not require Tandem — they are complementary. Use Tandem when
+the task benefits from: real authenticated session context, the security
+model, or human-in-the-loop review of proposed browser actions.
 
 ---
 
