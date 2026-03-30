@@ -24,6 +24,7 @@ _Last updated: 2026-03-30_
 | REST API routing | **Unbrowse** (API-first for known web services) |
 | Pre-built site CLI | **OpenCLI** (deterministic adapters, zero LLM cost at runtime) |
 | Real browser surface | **Tandem Browser** (human+agent collaboration, 250-endpoint local API) |
+| Multi-agent networking | **OpenAgents** (agent discovery, collaboration, shared workspace) |
 | Distribution | Default model option in OpenClaw for desktop companion mode |
 
 ### Technical foundation (arxiv:2511.21631)
@@ -504,6 +505,63 @@ If Nova is the personalization layer, its memory should implement:
 
 ---
 
+## 7c. OpenAgents — Multi-Agent Networking Layer
+
+**Repo:** `openagents-org/openagents`
+**What it is:** An agent networking platform that enables AI agents to discover each other, communicate in real time, and collaborate — with humans and with other agents.
+
+OpenClaw is explicitly first-class supported:
+```bash
+openagents start openclaw    # starts OpenClaw and connects it to a workspace
+openagents start openclaw --create-workspace "my-team"
+```
+
+### What OpenAgents adds to PsiClaw
+
+**Agent discovery and delegation**
+Agents in a workspace can discover each other and delegate tasks:
+- `@claude can you review this code?` routes to a Claude Code agent
+- `@psiclaw take a screenshot and tell me what's on screen` routes to PsiClaw
+- Natural language cross-agent routing without manual orchestration
+
+**Shared browser across agents**
+Multiple agents can share a live browser session — PsiClaw does the visual
+desktop work while a code agent handles implementation in the same workspace.
+
+**Background daemon**
+`openagents up` runs all agents as persistent background services. Survives
+laptop sleep, auto-restarts on crash. This is the always-on behavior required
+for a desktop companion.
+
+**Protocol-agnostic**
+Native MCP + A2A support. Agents receive workspace API skills via system
+prompt injection so they can call workspace endpoints directly.
+
+### Network topology for PsiClaw deployment
+
+```
+OpenAgents Workspace
+    ├── Nova          (OpenClaw — main agent, memory, orchestration)
+    ├── PsiClaw       (qwen3-vl-8b — desktop companion, visual grounding)
+    ├── Code Agent    (Claude Code / Codex — implementation)
+    └── Shared: browser, files, @mention delegation
+```
+
+This topology enables:
+- PsiClaw to offload code generation to a dedicated code agent
+- Nova to orchestrate across agents without leaving its session
+- Humans to interact with any agent in a shared real-time workspace
+- The multi-session OK Code iOS feature (each session maps to an agent node)
+
+### Integration path
+OpenAgents is already OpenClaw-native. The shortest path is:
+1. `npm install -g openagents` on the mini
+2. `openagents start openclaw` to connect Nova to a workspace
+3. `openagents start openclaw --name psiclaw` for the PsiClaw agent instance
+4. Configure the workspace token in the OK Code iOS multi-session view
+
+---
+
 ## 9. Next Steps
 
 - [ ] Create `data/` directory with training data collection structure
@@ -514,3 +572,6 @@ If Nova is the personalization layer, its memory should implement:
 - [ ] Compare base vs fine-tuned on state-grounding eval set
 - [ ] Prototype memory-as-reasoning layer for OpenTrust using Honcho as reference
 - [ ] Spec OK Code iOS multi-session feature (session switcher, badges, live indicators)
+- [ ] Evaluate OpenAgents as multi-agent backbone: `openagents start openclaw` on the mini
+- [ ] Install Tandem Browser on personal MacBook; verify local API at 127.0.0.1:8765
+- [ ] Install OpenCLI: `npm install -g @jackwener/opencli` + `opencli doctor`
