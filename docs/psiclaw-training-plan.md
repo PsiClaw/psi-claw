@@ -14,13 +14,24 @@ _Last updated: 2026-03-30_
 | Decision | Choice |
 |---|---|
 | Base model | **qwen3-vl-8b** |
-| Local format (Mac mini 16GB) | **MLX 4BIT (5.78 GB)** |
-| Local format (M3 Max 48GB) | **MLX 8BIT (9.87 GB)** |
-| Fine-tuning target | **7B/8B class** (runs on 8–16GB user machines) |
+| Host machine | **Work MacBook (M4 Pro)** — serves qwen3-vl-8b via LM Studio |
+| Local format on work MacBook | **MLX 8BIT (9.87 GB)** — full quality |
+| Access from personal MacBook | **LM Link** (remote inference, feels local) |
+| Mac mini format (16GB) | **MLX 4BIT (5.78 GB)** for lightweight local tasks |
+| Fine-tuning target | **8B class** (runs on 8–16GB user machines) |
 | Agent framework | **Qwen-Agent** (native, first-party for this model family) |
 | Personalization layer | **OpenTrust** (memory as reasoning, not static retrieval) |
 | Efficiency layer | **Unbrowse** (API-first for known web services) |
 | Distribution | Default model option in OpenClaw for desktop companion mode |
+
+### Technical foundation (arxiv:2511.21631)
+Three architectural upgrades in Qwen3-VL directly relevant to PsiClaw:
+
+- **Interleaved-MRoPE** — stronger spatial-temporal modeling across sequences of images/video. For desktop operation: the model reasons about what *changed* between screenshots, not just individual frames.
+- **DeepStack** — multi-level ViT features for tighter vision-language alignment. Produces more accurate UI element identification — when the model targets a button, it has a richer visual representation.
+- **Text-based time alignment** — explicit textual timestamp alignment for temporal grounding. Useful for trace replay and session history reasoning.
+
+The Qwen team explicitly frames this model as: _"a foundational engine for image-grounded reasoning, agentic decision-making, and multimodal code intelligence in real-world workflows."_ That is the PsiClaw use case.
 
 ### Why qwen3-vl-8b over qwen2.5-vl-7b
 Head-to-head benchmarks on identical hardware (M4 Mac, local inference):
