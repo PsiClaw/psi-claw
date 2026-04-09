@@ -629,6 +629,8 @@ OpenAgents is already OpenClaw-native. The shortest path is:
 
 ## 9. Next Steps
 
+- [ ] Read `docs/psiclaw-mvp-plan.md` and lock the MVP wedge before further platform expansion
+- [ ] Ship one end-to-end operator loop backed by live state, persisted traces, and enforced approvals
 - [ ] Create `data/` directory with training data collection structure
 - [ ] Collect 100 browser interaction traces (success + failure + recovery)
 - [ ] Run BrowseComp hard-find eval on base `qwen2.5-vl`
@@ -640,3 +642,17 @@ OpenAgents is already OpenClaw-native. The shortest path is:
 - [ ] Evaluate OpenAgents as multi-agent backbone: `openagents start openclaw` on the mini
 - [ ] Install Tandem Browser on personal MacBook; verify local API at 127.0.0.1:8765
 - [ ] Install OpenCLI: `npm install -g @jackwener/opencli` + `opencli doctor`
+
+### MVP sequencing note
+
+The current training plan intentionally reaches beyond what should be built first.
+Before scaling into full desktop coverage, long-term memory, or multi-agent orchestration,
+PsiClaw should pass through a narrower MVP stage:
+
+- one supported task surface
+- one real operator approval loop
+- one persisted trace pipeline
+- one basic eval path grounded in live runs
+
+See `docs/psiclaw-mvp-plan.md` for the concrete product plan that bridges the current
+UI harness to a credible first release.
