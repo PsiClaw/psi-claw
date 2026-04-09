@@ -198,6 +198,7 @@ PsiClaw operates under a **confirmation-first safety policy**:
 ```
 psi-claw/
 ├── docs/
+│   ├── psiclaw-mvp-plan.md           # MVP definition, scope, phases, and exit criteria
 │   ├── psiclaw-training-plan.md      # Full training design + research sources
 │   └── psiclaw-system-prompt-v2.md   # System prompt used for fine-tuning
 ├── src/
@@ -274,8 +275,22 @@ PsiClaw connects to several components in the broader OpenKnots ecosystem:
 
 **v0.1.0** — The UI harness is built with demo data. No live ML backend is wired up yet.
 
+### MVP focus
+
+The immediate goal is not full desktop coverage. The next milestone is a narrow MVP:
+
+- one supported task surface
+- live operator approvals
+- persisted traces
+- basic eval reporting from real runs
+
+See `docs/psiclaw-mvp-plan.md` for the detailed roadmap from the current prototype to MVP.
+
 ### Next steps
 
+- [ ] Lock the MVP wedge defined in `docs/psiclaw-mvp-plan.md`
+- [ ] Replace demo-only console state with a live operator loop
+- [ ] Persist traces and derive evals from real runs
 - [ ] Create `data/` directory with training data collection structure
 - [ ] Collect 100 desktop interaction traces (success + failure + recovery)
 - [ ] Run BrowseComp hard-find eval on base qwen3-vl-8b
